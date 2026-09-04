@@ -1,0 +1,5 @@
+period,current,7daysAgo,30daysAgo,60daysAgo,90daysAgo,currency
+0q,,,,,,GBP
++1q,,,,,,GBP
+0y,0.99836,0.99534,1.00163,1.00407,1.01618,GBP
++1y,1.01791,1.03549,1.03473,1.06493,1.12485,GBP

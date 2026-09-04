@@ -1,0 +1,5 @@
+period,upLast7days,upLast30days,downLast30days,downLast7Days,currency
+0q,9,13,0,2,USD
++1q,8,12,1,2,USD
+0y,13,16,0,1,USD
++1y,8,10,0,1,USD

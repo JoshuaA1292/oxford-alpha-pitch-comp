@@ -1,0 +1,5 @@
+period,upLast7days,upLast30days,downLast30days,downLast7Days,currency
+0q,,,,,GBP
++1q,,,,,GBP
+0y,4.0,5.0,7.0,7.0,GBP
++1y,6.0,6.0,6.0,5.0,GBP

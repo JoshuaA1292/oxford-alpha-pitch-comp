@@ -1,0 +1,5 @@
+period,avg,low,high,yearAgoEps,numberOfAnalysts,growth,currency
+0q,,,,,,,GBP
++1q,,,,,,,GBP
+0y,0.99836,0.942,1.0522,0.996,18.0,0.0023999999,GBP
++1y,1.01791,0.94028,1.1458,0.99836,18.0,0.0196,GBP
