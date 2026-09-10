@@ -2,7 +2,7 @@
 
 **Oxford Alpha Fund · Varsity Pitch Competition 2026 · Strategy Memo**
 
-A research-backed plan for finding the stock, building the analytics, and winning the final — engineered around what the judges at Point72, Fidelity, and Citadel actually pay for. Compiled 27 Aug 2026 from a 7-agent research sweep. The stock selection this playbook drove is documented in [CASE_SANDISK_SHORT.md](CASE_SANDISK_SHORT.md).
+A research-backed plan for finding the stock, building the analytics, and winning the final — engineered around what the judges at Point72, Fidelity, and Citadel actually pay for. Compiled 27 Aug 2026 from a 7-agent research sweep. The stock selection this playbook drove is documented in [CASE_SANDISK_SHORT.md](CASE_SANDISK_SHORT.md) (rebuilt 9 Sep after the red-team in [REDTEAM_2026-09-09.md](REDTEAM_2026-09-09.md)).
 
 | | |
 |---|---|
@@ -119,13 +119,16 @@ Sentiment extremely bullish; most crowded trades: long semiconductors, long Magn
 
 | When | Milestone |
 |---|---|
-| Week 1 | Screen & commit ✅ (done — SNDK selected 2 Sep, engine built and tested) |
-| Weeks 2–3 | Build out remaining exhibits, Excel mirror, primary research (10-K, Kioxia, NAND price series, channel checks) |
-| Week 4 | Thesis lock & internal red-team; freeze pillars and event path |
-| Week 5 | Deck, one-pager, model — submit ahead of deadline |
-| Weeks 6–7 | Rehearse: full run-throughs to stopwatch; mock Q&A drills; refresh all data the week of finals |
+| Week 1 (to 2 Sep) | Screen & commit ✅ — SNDK selected, engine built and tested |
+| Week 2 (to 9 Sep) | Full red-team ✅ — see [REDTEAM_2026-09-09.md](REDTEAM_2026-09-09.md). Case rebuilt around the contract book; contract-aware engine; all data refreshed; 17/17 tests |
+| Weeks 3–4 (to 25 Sep) | Build S2 (bits × price decomposition), S6 (revisions vs price overlay), A5 (base-rate and cycle tables) from the research reports; Excel mirror of `sndk_contract_dcf.py`; confirm submission deadline |
+| 30 Sep – 5 Oct | **Micron FQ4 (30 Sep) and TrendForce 4Q26 release** — refresh every number; thesis lock; freeze pillars, event path, kill criteria |
+| Week of 5 Oct | Deck, one-pager, model — submit ahead of deadline |
+| 8–15 Oct | Rehearse: full run-throughs to stopwatch; mock Q&A from case §8 (the S3 bull case must be delivered better than the bulls deliver it); refresh data the morning of finals |
 
 **Team roles (3–4):** Modeler (Python engine + Excel mirror, L1–2, 4) · Quant/data (B-L pipeline + alt-data, L3, 5) · Analyst (industry, filings, primary research, write-up) · Storyteller (deck design, narrative, rehearsal discipline).
+
+**Status 9 Sep 2026:** Week-4 thesis lock and internal red team completed early ([REDTEAM_2026-09-09.md](REDTEAM_2026-09-09.md)). Verdict: conditional pass; case rebuilt around the contract book (the "capitalising a five-year contract as a perpetuity" spine), base rates tabulated, Kioxia relative value added, catalysts re-dated (Micron 30 Sep, TrendForce 4Q26 early Oct, SNDK 6 Nov). Remaining: Excel mirror, appendix build, mock Q&A, and refreshing every exhibit after the Micron print and again the day before the final.
 
 ## 8. How teams lose — our guardrails
 

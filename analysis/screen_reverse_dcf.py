@@ -1,6 +1,12 @@
 """Reverse-DCF screen: what does the current price force you to believe?
 
 Candidates: SNDK (short case), DGE.L (long case), MU (cross-check).
+
+NOTE (9 Sep 2026 red team): this is the week-1 SCREEN that selected SNDK.
+Its E1 uses a 62% boom margin, which is BELOW consensus (FY27/28 consensus
+net margins ~64%/67%). The deck's headline numbers come from
+analysis/sndk_contract_dcf.py, which pays consensus net income and the NBM
+contract floor in full. Keep this file for provenance of the selection.
 Run:  analysis/.venv/bin/python analysis/screen_reverse_dcf.py
 """
 import json
@@ -77,7 +83,8 @@ nopat_perp = implied_terminal_nopat(ev, fcfs, WACC, INFL)
 print(f"\n  [E1] Pay for the boom: PV of consensus FY27-28 FCF at 62% margins = ${pv_boom/1e9:,.1f}bn ({pv_boom/ev:.0%} of EV)")
 print(f"       Residual EV ${ (ev-pv_boom)/1e9:,.1f}bn requires PERPETUAL NOPAT of ${nopat_perp/1e9:,.1f}bn/yr from FY29 forever")
 print(f"       vs SNDK actual op income:  FY23 -$1.30bn | FY24 -$0.44bn | FY25 +$0.51bn | FY26 +$12.47bn")
-print(f"       => market demands {nopat_perp/0.51e9:,.0f}x SNDK's best pre-boom year, forever, AFTER paying for the boom")
+print(f"       => market demands {nopat_perp/1.56e9:,.0f}x standalone SanDisk's best year ever (FY2014 op income $1.56bn), forever, AFTER paying for the boom")
+print(f"          (FY25's $0.51bn is year one post-spin after a $1.8bn impairment - NOT a fair 'best year'; see sndk_contract_dcf.py for the deck numbers)")
 
 # Sensitivity on WACC
 for w in (0.10, 0.12, 0.13):

@@ -24,7 +24,8 @@ OUT.mkdir(exist_ok=True)
 info = json.loads((DATA / "info.json").read_text())
 S = info["currentPrice"]
 shares, debt, cash = info["sharesOutstanding"], info["totalDebt"], info["totalCash"]
-r = 0.0377  # 13w T-bill (^IRX) 3.77%
+ASOF = "2026-09-09"  # data snapshot date
+r = 0.0380  # 13w T-bill (^IRX) 3.80%
 report = {}
 
 plt.rcParams.update({"figure.dpi": 140, "font.size": 10, "axes.grid": True,
@@ -50,14 +51,14 @@ def bl_for(expiry, T_years, min_oi=50):
     K, f = rn_density(S, T_years, r, sigma_fn, max(klo, 100), min(khi, 6000), n=4001)
     raw_integral = float(np.trapezoid(f, K))
     f = f / raw_integral  # renormalize over observed strike range (truncation disclosed)
-    st = density_stats(K, f, thresholds=(S, 1161.0, 756.0, 2354.0, 1000.0))
+    st = density_stats(K, f, thresholds=(S, 2125.0, 2354.0, 1200.0, 1000.0, 750.0))
     st["integral"] = raw_integral
     # model-free cross-check: P(S_T > K) = -e^{rT} dC/dK via tight call spread
     def digital(Kx, h=5.0):
         c1 = bs_call(S, Kx - h, T_years, r, float(sigma_fn(Kx - h)))
         c2 = bs_call(S, Kx + h, T_years, r, float(sigma_fn(Kx + h)))
         return np.exp(r * T_years) * (c1 - c2) / (2 * h)
-    st["digital_check"] = {k: digital(k) for k in (S, 1161.0, 756.0)}
+    st["digital_check"] = {k: digital(k) for k in (S, 2125.0, 1000.0)}
     atm_iv = float(sigma_fn(S))
     # 25-delta risk reversal from fitted smile
     from scipy.stats import norm
@@ -72,14 +73,14 @@ def bl_for(expiry, T_years, min_oi=50):
     return dict(K=K, f=f, stats=st, atm_iv=atm_iv, rr25=rr25,
                 n_quotes=used, k25c=k25c, k25p=k25p)
 
-res_jan = bl_for("2027-01-15", (pd.Timestamp("2027-01-15") - pd.Timestamp("2026-09-02")).days / 365)
-res_mar = bl_for("2027-03-19", (pd.Timestamp("2027-03-19") - pd.Timestamp("2026-09-02")).days / 365)
+res_jan = bl_for("2027-01-15", (pd.Timestamp("2027-01-15") - pd.Timestamp(ASOF)).days / 365)
+res_mar = bl_for("2027-03-19", (pd.Timestamp("2027-03-19") - pd.Timestamp(ASOF)).days / 365)
 
 for label, res in (("Jan-2027", res_jan), ("Mar-2027", res_mar)):
     st = res["stats"]
     print(f"[B-L {label}] quotes used {res['n_quotes']}, ATM IV {res['atm_iv']:.0%}, "
           f"25d RR {res['rr25']:+.1%}")
-    print(f"   pre-norm integral {st['integral']:.3f} | RN mean {st['mean']:,.0f} (fwd {S*np.exp(r* (0.37 if label=='Jan-2027' else 0.54)):,.0f})")
+    print(f"   pre-norm integral {st['integral']:.3f} | RN mean {st['mean']:,.0f} (fwd {S*np.exp(r* ((pd.Timestamp('2027-01-15')-pd.Timestamp(ASOF)).days/365 if label=='Jan-2027' else (pd.Timestamp('2027-03-19')-pd.Timestamp(ASOF)).days/365)):,.0f})")
     for k, p in st["probs"].items():
         chk = st["digital_check"].get(k)
         extra = f"  [call-spread check: {chk:.1%}]" if chk is not None else ""

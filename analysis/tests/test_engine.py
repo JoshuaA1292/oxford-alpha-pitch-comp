@@ -144,3 +144,49 @@ def test_summarize_percentile():
     s = summarize(vals, price=50.0)
     assert s["prob_above_price"] == pytest.approx(0.5, abs=0.01)
     assert s["p5"] < s["median"] < s["p95"]
+
+
+# ---------------- contract-aware model (sndk_contract_dcf.py) ----------------
+def _load_contract_module():
+    import importlib.util, sys
+    from pathlib import Path
+    p = Path(__file__).resolve().parents[1] / "sndk_contract_dcf.py"
+    spec = importlib.util.spec_from_file_location("sndk_contract_dcf", p)
+    m = importlib.util.module_from_spec(spec)
+    sys.modules["sndk_contract_dcf"] = m
+    spec.loader.exec_module(m)
+    return m
+
+
+def test_contract_required_nopat_reproduces_ev():
+    """PV(paid years) + PV(perpetuity of the required post-contract NOPAT) == EV."""
+    m = _load_contract_module()
+    req = m.required_post_contract()
+    tv = req["nopat_req"] * (1 + m.INFL) / (m.WACC - m.INFL)
+    ev_check = req["pv_paid"] + tv / (1 + m.WACC) ** 5
+    assert abs(ev_check - m.EV) / m.EV < 1e-9
+
+
+def test_contract_required_gm_reproduces_nopat():
+    """Revenue at the implied permanent GM on the FY32 cost base yields the required NOPAT."""
+    m = _load_contract_module()
+    req = m.required_post_contract()
+    _, _, df = m.sop(0.40, verbose=True)
+    opex32 = df.loc[df.fy == 32, "opex"].item()
+    ebita = req["rev_req"] * req["gm_req"] - opex32
+    assert abs(ebita * (1 - m.TAX) - req["nopat_req"]) / req["nopat_req"] < 1e-9
+
+
+def test_contract_value_monotone_in_margin_and_growth():
+    m = _load_contract_module()
+    vals = [m.sop(g) for g in (0.2, 0.4, 0.6, 0.8)]
+    assert all(b > a for a, b in zip(vals, vals[1:]))
+    vals = [m.sop(0.4, bit_growth=b) for b in (0.05, 0.15, 0.25)]
+    assert all(b > a for a, b in zip(vals, vals[1:]))
+    assert m.sop(0.4, wacc=0.13) < m.sop(0.4, wacc=0.10)
+
+
+def test_contract_pay5_residual_matches_closed_form():
+    m = _load_contract_module()
+    tv = m.perp5 * (1 + m.INFL) / (m.WACC - m.INFL)
+    assert abs(m.pv_boom5 + tv / (1 + m.WACC) ** 5 - m.EV) / m.EV < 1e-9
